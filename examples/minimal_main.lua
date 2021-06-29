@@ -5,6 +5,9 @@ gllib.set_loader(lj_glfw)
 local gl, glc, glu, glext = gllib.libraries()
 local ig = require"imgui.glfw"
 
+--print(package.cpath)
+local lj_root = package.cpath:match(";[^;]+;([^?]+)")
+
 lj_glfw.setErrorCallback(function(error,description)
     print("GLFW error:",error,ffi.string(description or ""));
 end)
@@ -20,10 +23,14 @@ local ig_impl = ig.Imgui_Impl_glfw_opengl3() --standard imgui opengl3 example
 
 local igio = ig.GetIO()
 igio.ConfigFlags = ig.lib.ImGuiConfigFlags_NavEnableKeyboard + igio.ConfigFlags
---igio.FontGlobalScale = 5
-local FontsAt = ig.GetIO().Fonts
-FontsAt:AddFontFromFileTTF("C:\\d\\LuaJIT-ImGui\\cimgui\\imgui\\misc\\fonts\\Roboto-Medium.ttf", 32);
---FontsAt:GetTexDataAsAlpha8()
+
+function load_font(filename, size)
+  local FontsAt = ig.GetIO().Fonts
+  FontsAt:AddFontFromFileTTF(lj_root..filename, size);
+  FontsAt:Build()
+end
+
+load_font("data\\Roboto-Medium.ttf", 32)
 
 ig_impl:Init(window, true)
 
